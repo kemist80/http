@@ -33,11 +33,11 @@ class CurlClientTest extends \PHPUnit_Framework_TestCase {
 
     public function testRequestHeaders() {
         $uri = new Uri('http://httpbin.org/headers');
-        $headers=[
+        $headers=array(
             'Accept' => 'text/html',
             'Accept-encoding' => 'gzip,deflate',
             'Cookie' => 'cookie1=value1;cookie2=value2'
-        ];
+        );
         $request = new Request($uri, 'GET', $headers);
         $client = new CurlClient();
         $response = $client->send($request);
@@ -47,10 +47,10 @@ class CurlClientTest extends \PHPUnit_Framework_TestCase {
 
     public function testPost() {
         $uri = new Uri('http://httpbin.org/post');
-        $request = new Request($uri, 'POST', [
+        $request = new Request($uri, 'POST', array(
             'Accept' => 'text/html',
             'Accept-encoding' => 'gzip,deflate',
-        ]);
+        ));
         $request = $request->withBody(new StringStream('param1=1&param2=2'));
         $client = new CurlClient();
         $response = $client->send($request);
