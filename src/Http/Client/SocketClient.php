@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.1
+ * @version 1.0.2
  */
 class SocketClient extends AbstractClient {
 
@@ -82,8 +82,10 @@ class SocketClient extends AbstractClient {
 
                 do {
                     $data = $stream->read($length);
-                    $length -= strlen($data);
-                    $temporary->write($data);
+                    if (false !== $data){
+                        $length -= strlen($data);
+                        $temporary->write($data);
+                    }
                     if ($length <= 0 || $stream->eof()) {
                         break;
                     }

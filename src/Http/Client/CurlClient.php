@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.1
+ * @version 1.0.2
  * 
  */
 class CurlClient extends AbstractClient {
@@ -135,8 +135,6 @@ class CurlClient extends AbstractClient {
                 $options[CURLOPT_NOBODY] = true;
                 break;
             case 'POST':
-//                $options[CURLOPT_POST] = true;
-//                $options[CURLOPT_REFERER] = (string) $request->getUri();
             case 'CONNECT':
             case 'DELETE':
             case 'PATCH':
