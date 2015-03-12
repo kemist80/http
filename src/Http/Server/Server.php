@@ -7,7 +7,7 @@ namespace Kemist\Http\Server;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 class Server {
 
@@ -91,9 +91,10 @@ class Server {
      * @return Closure
      */
     protected function _getMiddlewareCaller() {
-        return function($middlewares, $middleware) {
-            return function($request) use ($middlewares, $middleware) {
-                return call_user_func($middleware, $request, $middlewares, $this);
+        $server=$this;
+        return function($middlewares, $middleware) use ($server) {
+            return function($request) use ($middlewares, $middleware, $server) {
+                return call_user_func($middleware, $request, $middlewares, $server);
             };
         };
     }
