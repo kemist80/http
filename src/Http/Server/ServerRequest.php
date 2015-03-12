@@ -14,8 +14,8 @@ use Kemist\Http\Uri;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
- * @todo detect body encoding and parse it
+ * @version 1.0.1
+ * 
  */
 class ServerRequest extends Request implements ServerRequestInterface {
 
@@ -71,23 +71,17 @@ class ServerRequest extends Request implements ServerRequestInterface {
         if (count($headers) == 0) {
             $headers = $this->_extractHeadersFromServerParams();
         }
-        if ($body == 'php://input') {
-            $body = new InputStream('php://input');
-        }
+
+        $body = ($body == 'php://input' ? new InputStream('php://input') : $body);
+
         if (count($this->_server_params) > 0) {
-            if ($uri === null) {
-                $uri = $this->_extractUri();
-            }
+            $uri = ($uri === null ? $this->_extractUri() : $uri);
             if ($method === null) {
                 $method = isset($this->_server_params['REQUEST_METHOD']) ? $this->_server_params['REQUEST_METHOD'] : 'GET';
             }
         } else {
-            if ($method === null) {
-                $method = 'GET';
-            }
-            if ($uri === null) {
-                $uri = new Uri();
-            }
+            $method = ($method === null ? 'GET' : $method);
+            $uri = ($uri === null ? new Uri() : $uri);
         }
 
         parent::__construct($uri, $method, $headers, $body);
