@@ -12,15 +12,9 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 class SocketClient extends AbstractClient {
-
-    /**
-     * Timer to measure timeout
-     * @var int 
-     */
-    protected $_timer_start;
 
     /**
      * Sends an HTTP request
@@ -39,7 +33,7 @@ class SocketClient extends AbstractClient {
         }
 
         $f = stream_socket_client(($port == 443 ? 'ssl://' : 'tcp://') . $uri->getHost() . ':' . $port, $errno, $errstr, $this->_options['connection_timeout'], STREAM_CLIENT_CONNECT);
-        if ($errstr) {
+        if ($f === false) {
             throw new ClientException('Socket error: ' . $errno . ' - ' . $errstr);
         }
 
@@ -62,17 +56,14 @@ class SocketClient extends AbstractClient {
                 $temp = explode(':', $line, 2);
                 $header_name = trim(urldecode($temp[0]));
                 $header_value = trim(urldecode($temp[1]));
-                if ($response->hasHeader($header_name)) {
-                    $response = $response->withAddedHeader($header_name, $header_value);
-                } else {
-                    $response = $response->withHeader($header_name, $header_value);
-                }
+                $response = $this->_addHeaderToResponse($response, $header_name, $header_value);
             }
             $i++;
         }
 
         $temporary = new Stream(tmpfile());
 
+        // Dechunk
         if ($this->_options['dechunk_content'] && $response->getHeader('transfer-encoding') == 'chunked') {
             do {
                 $line = $stream->readLine();
@@ -100,12 +91,14 @@ class SocketClient extends AbstractClient {
             } while (true);
         } else {
             while (!$stream->eof()) {
-                $data = $stream->read(4096);
-                $temporary->write($data);
+                if (false !== $data = $stream->read(4096)) {
+                    $temporary->write($data);
+                }
             }
         }
         $stream->close();
 
+        // Decode
         if ($this->_options['decode_content'] && in_array($response->getHeader('content-encoding'), array('gzip', 'deflate'))) {
             if (!$this->_options['dechunk_content'] && $response->getHeader('transfer-encoding') == 'chunked') {
                 throw new ClientException('Unable to decode chunked data without dechunking!');
@@ -114,7 +107,9 @@ class SocketClient extends AbstractClient {
             $temporary->seek(10);
             $temporary->appendFilter('zlib.inflate', STREAM_FILTER_READ);
             while (!$temporary->eof()) {
-                $temporary2->write($temporary->read(4096));
+                if (false !== $data2 = $temporary->read(4096)) {
+                    $temporary2->write($data2);
+                }
             }
             $temporary->close();
             $temporary = $temporary2;

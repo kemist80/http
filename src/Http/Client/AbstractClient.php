@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 abstract class AbstractClient {
 
@@ -41,6 +41,12 @@ abstract class AbstractClient {
      * @var Request 
      */
     protected $_last_request;
+
+    /**
+     * Timer to measure timeout
+     * @var int 
+     */
+    protected $_timer_start;
 
     /**
      * Constructor
@@ -133,11 +139,10 @@ abstract class AbstractClient {
                         }
                         break;
                     case 'domain':
-                        
-                        if ($item_value != $request->getUri()->getHost()
-                            &&
-                            !(substr($item_value,0,1)=='.' && strstr($request->getUri()->getHost(),$item_value))
-                            ) {
+
+                        if ($item_value != $request->getUri()->getHost() &&
+                                !(substr($item_value, 0, 1) == '.' && strstr($request->getUri()->getHost(), $item_value))
+                        ) {
                             continue 3;
                         }
                         break;
@@ -169,6 +174,24 @@ abstract class AbstractClient {
      */
     public function getLastRequest() {
         return $this->_last_request;
+    }
+
+    /**
+     * Adds a header to the response object
+     * 
+     * @param Response $response
+     * @param string $header_name
+     * @param string $header_value
+     * 
+     * @return Response
+     */
+    protected function _addHeaderToResponse($response, $header_name, $header_value) {
+        if ($response->hasHeader($header_name)) {
+            $response = $response->withAddedHeader($header_name, $header_value);
+        } else {
+            $response = $response->withHeader($header_name, $header_value);
+        }
+        return $response;
     }
 
 }

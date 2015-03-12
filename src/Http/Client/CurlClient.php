@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  * 
  */
 class CurlClient extends AbstractClient {
@@ -91,11 +91,7 @@ class CurlClient extends AbstractClient {
             $temp = explode(':', $header, 2);
             $header_name = trim(urldecode($temp[0]));
             $header_value = trim(urldecode($temp[1]));
-            if ($response->hasHeader($header_name)) {
-                $response = $response->withAddedHeader($header_name, $header_value);
-            } else {
-                $response = $response->withHeader($header_name, $header_value);
-            }
+            $response=$this->_addHeaderToResponse($response,$header_name,$header_value);
         }
         // Write content
         $response->getBody()->write($content);

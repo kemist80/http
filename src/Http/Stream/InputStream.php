@@ -7,7 +7,7 @@ namespace Kemist\Http\Stream;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 class InputStream extends Stream {
 
@@ -18,8 +18,8 @@ class InputStream extends Stream {
     protected $_buffer = '';
 
     /**
-     * 
-     * @var type 
+     * All input is read
+     * @var bool 
      */
     protected $_all_read = false;
 

@@ -10,13 +10,13 @@ use Psr\Http\Message\StreamableInterface;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 abstract class AbstractMessage implements MessageInterface {
 
     /**
      * HTTP protocol version 
-     * @var type 
+     * @var string 
      */
     protected $_protocol;
 
@@ -152,17 +152,29 @@ abstract class AbstractMessage implements MessageInterface {
      * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withHeader($name, $value) {
-        if (!is_string($name) ||
-                (!is_string($value) && !is_array($value))
-        ) {
-            throw new \InvalidArgumentException('Invalid header name or header value given!');
-        }
+        $this->_checkHeader($name, $value);
         $clone = clone $this;
         if (strtolower($name) == 'set-cookie' && !is_array($value)) {
             $value = array($value);
         }
         $clone->_headers[strtolower($name)] = is_array($value) ? $value : explode(',', $value);
         return $clone;
+    }
+
+    /**
+     * Checks header name and value validity
+     * 
+     * @param string $name Case-insensitive header field name.
+     * @param string|string[] $value Header value(s).
+
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    protected function _checkHeader($name, $value) {
+        if (!is_string($name) ||
+                (!is_string($value) && !is_array($value))
+        ) {
+            throw new \InvalidArgumentException('Invalid header name or header value given!');
+        }
     }
 
     /**
@@ -183,18 +195,19 @@ abstract class AbstractMessage implements MessageInterface {
      * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withAddedHeader($name, $value) {
-        if (!is_string($name) ||
-                (!is_string($value) && !is_array($value))
-        ) {
-            throw new \InvalidArgumentException('Invalid header name or header value given!');
-        }
+        $this->_checkHeader($name, $value);
         $name = strtolower($name);
 
         if (!$this->hasHeader($name)) {
             return $this->withHeader($name, $value);
         }
         $clone = clone $this;
-        $clone->_headers[$name][] = $value;
+        if (is_array($value)){
+            $clone->_headers[$name]=array_merge($clone->_headers[$name],$value);
+        }else{
+            $clone->_headers[$name][] = $value;
+        }
+        
         return $clone;
     }
 
