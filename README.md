@@ -6,4 +6,14 @@
 
 HTTP library compliant with proposed [PSR-7](https://github.com/php-fig/fig-standards/blob/master/proposed/http-message-meta.md) message implementation.
 
-Description coming soon...
+## Installation
+
+Via composer:
+
+```json
+{
+    "require": {
+        "kemist/http": "dev-master"
+    }
+}
+```
