@@ -17,3 +17,5 @@ Via composer:
     }
 }
 ```
+
+Detailed descripton is on the way...
