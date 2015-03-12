@@ -12,7 +12,7 @@ use Kemist\Http\Stream\Stream;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 class Request extends AbstractMessage implements RequestInterface {
 
@@ -53,7 +53,7 @@ class Request extends AbstractMessage implements RequestInterface {
     /**
      * Constructor
      * 
-     * @param UriInterface $uri
+     * @param string|UriInterface $uri
      * @param string $method
      * @param array $headers
      * @param string|StreamableInterface $body
