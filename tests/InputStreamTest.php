@@ -38,7 +38,9 @@ class InputStreamTest extends \PHPUnit_Framework_TestCase {
         $stream = new StringStream('param1=value1&param2=value2');
         $input = new InputStream($stream->getResource());
         $input->rewind();
-        $input->read(8192);
+        while (!$input->eof()) {
+            $input->read(8192);
+        }
         $input->rewind();
         $this->assertFalse($input->read(8192));
     }
