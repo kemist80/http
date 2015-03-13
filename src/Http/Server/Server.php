@@ -7,7 +7,7 @@ namespace Kemist\Http\Server;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.2
+ * @version 1.0.3
  */
 class Server {
 
@@ -69,9 +69,9 @@ class Server {
 
     /**
      * Handles current request
-     * @param \Kemist\Http\Server\ServerResponse $response
+     * @param ServerResponse $response
      * 
-     * @return type
+     * @return ServerResponse
      */
     public function handle(ServerResponse $response = null) {
         if ($response === null) {
