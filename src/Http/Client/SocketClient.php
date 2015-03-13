@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.2
+ * @version 1.0.3
  */
 class SocketClient extends AbstractClient {
 
@@ -61,9 +61,37 @@ class SocketClient extends AbstractClient {
             $i++;
         }
 
+        // Dechunk content
+        $body = $this->_dechunk($stream, $response);
+        $stream->close();
+
+        // Decode content
+        $body = $this->_decode($body, $response);
+
+        if ($this->_timer_start + $this->_options['timeout'] < time()) {
+            throw new ClientException('Timeout exceeded!');
+        }
+
+        $response = $response->withBody($body);
+        $request = $this->setRequestCookies($request, $response);
+
+        $this->_last_request = $request;
+        return $this->followRedirection($request, $response);
+    }
+
+    /**
+     * Dechunks chunked content
+     * 
+     * @param Stream $stream
+     * @param Response $response
+     * 
+     * @return Stream
+     * 
+     * @throws ClientException
+     */
+    protected function _dechunk(Stream $stream, Response $response) {
         $temporary = new Stream(tmpfile());
 
-        // Dechunk
         if ($this->_options['dechunk_content'] && $response->getHeader('transfer-encoding') == 'chunked') {
             do {
                 $line = $stream->readLine();
@@ -82,7 +110,7 @@ class SocketClient extends AbstractClient {
 
                 do {
                     $data = $stream->read($length);
-                    if (false !== $data){
+                    if (false !== $data) {
                         $length -= strlen($data);
                         $temporary->write($data);
                     }
@@ -98,9 +126,20 @@ class SocketClient extends AbstractClient {
                 }
             }
         }
-        $stream->close();
+        return $temporary;
+    }
 
-        // Decode
+    /**
+     * Decodes encoded content
+     * 
+     * @param Stream $temporary
+     * @param Response $response
+     * 
+     * @return Stream
+     * 
+     * @throws ClientException
+     */
+    protected function _decode(Stream $temporary, Response $response) {
         if ($this->_options['decode_content'] && in_array($response->getHeader('content-encoding'), array('gzip', 'deflate'))) {
             if (!$this->_options['dechunk_content'] && $response->getHeader('transfer-encoding') == 'chunked') {
                 throw new ClientException('Unable to decode chunked data without dechunking!');
@@ -116,16 +155,7 @@ class SocketClient extends AbstractClient {
             $temporary->close();
             $temporary = $temporary2;
         }
-
-        if ($this->_timer_start + $this->_options['timeout'] < time()) {
-            throw new ClientException('Timeout exceeded!');
-        }
-
-        $response = $response->withBody($temporary);
-        $request = $this->setRequestCookies($request, $response);
-
-        $this->_last_request = $request;
-        return $this->followRedirection($request, $response);
+        return $temporary;
     }
 
 }
