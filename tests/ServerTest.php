@@ -19,7 +19,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
         };
         $server = new Server();
         $server->appendMiddleware($middleware);
-        $response = $server->listen();
+        $response = $server->handle();
         $this->assertEquals('test content', (string) $response->getBody());
     }
 
@@ -42,7 +42,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
         $server = new Server();
         $server->appendMiddleware($middleware1);
         $server->prependMiddleware($middleware2);
-        $response = $server->listen();
+        $response = $server->handle();
         $this->assertEquals('before test content', (string) $response->getBody());
     }
 
@@ -78,7 +78,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
         $server = new Server();
         $server->appendMiddleware($middleware1);
         $server->appendMiddleware($middleware2);
-        $response = $server->listen();
+        $response = $server->handle();
         $this->assertEquals('test content', (string) $response->getBody());
     }
 

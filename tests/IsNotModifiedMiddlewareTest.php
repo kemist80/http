@@ -17,7 +17,7 @@ class IsNotModifiedMiddlewareTest extends \PHPUnit_Framework_TestCase {
         $server->appendMiddleware(new IsNotModifiedMiddleware());
         $response = new ServerResponse();
         $response = $response->withHeader('etag', $etag);
-        $response = $server->listen($response);
+        $response = $server->handle($response);
         $this->assertEquals(304, $response->getStatusCode());
     }
 
@@ -33,7 +33,7 @@ class IsNotModifiedMiddlewareTest extends \PHPUnit_Framework_TestCase {
         $server->appendMiddleware(new IsNotModifiedMiddleware());
         $response = new ServerResponse();
         $response = $response->withHeader('last-modified', $last_modified);
-        $response = $server->listen($response);
+        $response = $server->handle($response);
         $this->assertEquals(304, $response->getStatusCode());
     }
 
@@ -56,7 +56,7 @@ class IsNotModifiedMiddlewareTest extends \PHPUnit_Framework_TestCase {
         $server->appendMiddleware($middleware);
         $response = new ServerResponse();
         $response = $response->withHeader('etag', $etag);
-        $response = $server->listen($response);
+        $response = $server->handle($response);
         $this->assertEquals('', (string) $response->getBody());
     }
 

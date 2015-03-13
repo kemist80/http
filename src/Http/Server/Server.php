@@ -7,7 +7,7 @@ namespace Kemist\Http\Server;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.1
+ * @version 1.0.2
  */
 class Server {
 
@@ -68,14 +68,14 @@ class Server {
     }
 
     /**
-     * Listens to incoming requests
+     * Handles current request
      * @param \Kemist\Http\Server\ServerResponse $response
      * 
      * @return type
      */
-    public function listen(ServerResponse $response = null) {
+    public function handle(ServerResponse $response = null) {
         if ($response === null) {
-            $response = new \Kemist\Http\Server\ServerResponse();
+            $response = new ServerResponse();
         }
 
         $initial = function() use ($response) {
@@ -91,7 +91,7 @@ class Server {
      * @return Closure
      */
     protected function _getMiddlewareCaller() {
-        $server=$this;
+        $server = $this;
         return function($middlewares, $middleware) use ($server) {
             return function($request) use ($middlewares, $middleware, $server) {
                 return call_user_func($middleware, $request, $middlewares, $server);
