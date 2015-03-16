@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.2
+ * @version 1.0.3
  * 
  */
 class CurlClient extends AbstractClient {
@@ -95,7 +95,8 @@ class CurlClient extends AbstractClient {
         }
         // Write content
         $response->getBody()->write($content);
-
+        $response->getBody()->rewind();
+        
         curl_close($ch);
         return $response;
     }

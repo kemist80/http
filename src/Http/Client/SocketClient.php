@@ -12,9 +12,22 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.3
+ * @version 1.0.4
  */
 class SocketClient extends AbstractClient {
+
+    /**
+     * Constructor
+     * 
+     * @param array $options
+     * @throws ClientException
+     */
+    public function __construct(array $options = array()) {
+        parent::__construct($options);
+        if (ini_get('allow_url_fopen') != '1') {
+            throw new ClientException('URL-aware fopen wrappers disabled!');
+        }
+    }
 
     /**
      * Sends an HTTP request
@@ -72,7 +85,8 @@ class SocketClient extends AbstractClient {
             throw new ClientException('Timeout exceeded!');
         }
 
-        $response = $response->withBody($body);
+        $body->rewind();
+        $response = $response->withBody($body);       
         $request = $this->setRequestCookies($request, $response);
 
         $this->_last_request = $request;
