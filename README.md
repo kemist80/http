@@ -44,7 +44,12 @@ var_dump($response->getBody()->getContents());
 Basic POST example:
 ```php
 <?php
-$request=new Kemist\Http\Request('http://httpbin.org/post','POST',array('accept'=>'text/html','connection'=>'close'));
+$request=(new Kemist\Http\Request())
+        ->withUri(new \Kemist\Http\Uri('http://httpbin.org/post'))
+        ->withMethod('POST')
+        ->withHeader('accept','text/html')
+        ->withHeader('connection','close')
+;
 $request=$request->withBody(new Kemist\Http\Stream\StringStream('param1=value1&param2=value2'));
 // cURL client
 $client=new Kemist\Http\Client\CurlClient();
