@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.3
+ * @version 1.0.4
  * 
  */
 class CurlClient extends AbstractClient {
@@ -29,11 +29,11 @@ class CurlClient extends AbstractClient {
      * @param array $options
      * @throws ClientException
      */
-    public function __construct(array $options = array()) {
-        parent::__construct($options);
+    public function __construct(array $options = array()) {        
         if (!extension_loaded('curl')) {
             throw new ClientException('Curl extension is not available!');
         }
+        parent::__construct($options);
     }
 
     /**

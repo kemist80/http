@@ -10,11 +10,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testAppendMiddleWare() {
-        $middleware = function($request, $next, $server) {
-            $response = $next($request, $server);
-            if (!$server->isPropagationStopped()) {
-                $response->getBody()->write('test content');
-            }
+        $middleware = function($request, $response) {
+            $response->getBody()->write('test content');
             return $response;
         };
         $server = new Server();
@@ -24,19 +21,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testPrependMiddleWare() {
-        $middleware1 = function($request, $next, $server) {
-            $response = $next($request, $server);
-            if (!$server->isPropagationStopped()) {
-                $response->getBody()->write('test content');
-            }
+        $middleware1 = function($request, $response) {
+            $response->getBody()->write('test content');
             return $response;
         };
 
-        $middleware2 = function($request, $next, $server) {
-            $response = $next($request, $server);
-            if (!$server->isPropagationStopped()) {
-                $response->getBody()->write('before ');
-            }
+        $middleware2 = function($request, $response) {
+            $response->getBody()->write('before ');
             return $response;
         };
         $server = new Server();
@@ -59,20 +50,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testPropagationStopped() {
-        $middleware1 = function($request, $next, $server) {
-            $response = $next($request, $server);
-            if (!$server->isPropagationStopped()) {
-                $response->getBody()->write('test content');
-                $server->stopPropagation();
-            }
+        $middleware1 = function($request, $response, $server) {
+            $response->getBody()->write('test content');
+            $server->stopPropagation();
             return $response;
         };
 
-        $middleware2 = function($request, $next, $server) {
-            $response = $next($request, $server);
-            if (!$server->isPropagationStopped()) {
-                $response->getBody()->write('never happens');
-            }
+        $middleware2 = function($request, $response, $server) {
+            $response->getBody()->write('never happens');
             return $response;
         };
         $server = new Server();

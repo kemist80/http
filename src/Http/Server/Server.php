@@ -46,25 +46,47 @@ class Server {
     /**
      * Appends a middleware
      * 
-     * @param mixed $middleware
+     * @param MiddlewareInterface|Closure $middleware
      */
     public function appendMiddleware($middleware) {
         if (!is_callable($middleware)) {
             throw new \InvalidArgumentException('Middleware must be a Closure or an object implementing __invoke method!');
         }
-        $this->_middlewares[] = $middleware;
+        $this->_middlewares[] = $this->_prepareMiddleware($middleware);
     }
 
     /**
      * Prepends a middleware
      * 
-     * @param mixed $middleware
+     * @param MiddlewareInterface|Closure $middleware
      */
     public function prependMiddleware($middleware) {
         if (!is_callable($middleware)) {
             throw new \InvalidArgumentException('Middleware must be a Closure or an object implementing __invoke method!');
         }
-        array_unshift($this->_middlewares, $middleware);
+        array_unshift($this->_middlewares, $this->_prepareMiddleware($middleware));
+    }
+
+    /**
+     * Prepares closure middleware for server
+     *  
+     * @param MiddlewareInterface|Closure $middleware
+     * 
+     * @return MiddlewareInterface|Closure
+     */
+    protected function _prepareMiddleware($middleware) {
+        if (!is_object($middleware) || !$middleware instanceof \Closure) {
+            return $middleware;
+        }
+        $clone = clone $middleware;
+        $middleware = function($request, $next, $server) use ($clone) {
+            $response = $next($request, $server);
+            if (!$server->isPropagationStopped()) {
+                $response = $clone($request, $response, $server);
+            }
+            return $response;
+        };
+        return $middleware;
     }
 
     /**

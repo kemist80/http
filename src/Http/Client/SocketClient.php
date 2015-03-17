@@ -12,7 +12,7 @@ use Kemist\Http\Exception\ClientException;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.4
+ * @version 1.0.5
  */
 class SocketClient extends AbstractClient {
 
@@ -23,10 +23,10 @@ class SocketClient extends AbstractClient {
      * @throws ClientException
      */
     public function __construct(array $options = array()) {
-        parent::__construct($options);
         if (ini_get('allow_url_fopen') != '1') {
             throw new ClientException('URL-aware fopen wrappers disabled!');
         }
+        parent::__construct($options);
     }
 
     /**
@@ -49,6 +49,20 @@ class SocketClient extends AbstractClient {
         if ($f === false) {
             throw new ClientException('Socket error: ' . $errno . ' - ' . $errstr);
         }
+
+        if ($request->getMethod() == 'POST') {
+            if (!$request->hasHeader('content-length')) {
+                $body = $request->getBody();
+                $body->rewind();
+                $content = $body->getContents();
+                $request = $request->withHeader('content-length', (string) strlen($content));
+                $body->rewind();
+            }
+            if (!$request->hasHeader('content-type')){
+                $request = $request->withHeader('content-type', 'application/x-www-form-urlencoded');
+            }
+        }
+
 
         $stream = new Stream($f);
         $stream->write($request->getRawMessage());
@@ -86,7 +100,7 @@ class SocketClient extends AbstractClient {
         }
 
         $body->rewind();
-        $response = $response->withBody($body);       
+        $response = $response->withBody($body);
         $request = $this->setRequestCookies($request, $response);
 
         $this->_last_request = $request;
