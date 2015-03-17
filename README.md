@@ -45,7 +45,7 @@ Basic POST example:
 ```php
 <?php
 $request=(new Kemist\Http\Request())
-        ->withUri(new \Kemist\Http\Uri('http://httpbin.org/post'))
+        ->withUri(new Kemist\Http\Uri('http://httpbin.org/post'))
         ->withMethod('POST')
         ->withHeader('accept','text/html')
         ->withHeader('connection','close')
