@@ -79,7 +79,7 @@ $client=new Kemist\Http\Client\SocketClient($options);
 ```
 
 ## HTTP Server
-When using the HTTP server component of this package, you can handle incoming request to the server through middleware objects or closures.
+When using the HTTP server component, you can handle incoming request to the server through middleware objects or closures.
 ```php
 <?php
 $server = new Kemist\Http\Server\Server();
