@@ -18,7 +18,7 @@ Via composer:
 ```json
 {
     "require": {
-        "kemist/http": "dev-master"
+        "kemist/http": "1.0.*"
     }
 }
 ```
