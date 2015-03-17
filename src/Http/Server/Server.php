@@ -7,7 +7,7 @@ namespace Kemist\Http\Server;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.3
+ * @version 1.0.4
  */
 class Server {
 
@@ -78,11 +78,10 @@ class Server {
         if (!is_object($middleware) || !$middleware instanceof \Closure) {
             return $middleware;
         }
-        $clone = clone $middleware;
-        $middleware = function($request, $next, $server) use ($clone) {
+        $middleware = function($request, $next, $server) use ($middleware) {
             $response = $next($request, $server);
             if (!$server->isPropagationStopped()) {
-                $response = $clone($request, $response, $server);
+                $response = $middleware($request, $response, $server);
             }
             return $response;
         };
