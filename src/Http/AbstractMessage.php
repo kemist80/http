@@ -202,12 +202,12 @@ abstract class AbstractMessage implements MessageInterface {
             return $this->withHeader($name, $value);
         }
         $clone = clone $this;
-        if (is_array($value)){
-            $clone->_headers[$name]=array_merge($clone->_headers[$name],$value);
-        }else{
+        if (is_array($value)) {
+            $clone->_headers[$name] = array_merge($clone->_headers[$name], $value);
+        } else {
             $clone->_headers[$name][] = $value;
         }
-        
+
         return $clone;
     }
 

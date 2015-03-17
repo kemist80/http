@@ -29,7 +29,7 @@ class CurlClient extends AbstractClient {
      * @param array $options
      * @throws ClientException
      */
-    public function __construct(array $options = array()) {        
+    public function __construct(array $options = array()) {
         if (!extension_loaded('curl')) {
             throw new ClientException('Curl extension is not available!');
         }
@@ -46,9 +46,9 @@ class CurlClient extends AbstractClient {
     public function send(Request $request) {
         $curl_options = $this->_generateCurlOptions($request);
 
-        $body = (string)$request->getBody();
-        if ($body != ''){
-            $curl_options[CURLOPT_POSTFIELDS]=$body;
+        $body = (string) $request->getBody();
+        if ($body != '') {
+            $curl_options[CURLOPT_POSTFIELDS] = $body;
         }
 
         $ch = curl_init();
@@ -91,12 +91,12 @@ class CurlClient extends AbstractClient {
             $temp = explode(':', $header, 2);
             $header_name = trim(urldecode($temp[0]));
             $header_value = trim(urldecode($temp[1]));
-            $response=$this->_addHeaderToResponse($response,$header_name,$header_value);
+            $response = $this->_addHeaderToResponse($response, $header_name, $header_value);
         }
         // Write content
         $response->getBody()->write($content);
         $response->getBody()->rewind();
-        
+
         curl_close($ch);
         return $response;
     }

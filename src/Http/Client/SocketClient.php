@@ -50,19 +50,7 @@ class SocketClient extends AbstractClient {
             throw new ClientException('Socket error: ' . $errno . ' - ' . $errstr);
         }
 
-        if ($request->getMethod() == 'POST') {
-            if (!$request->hasHeader('content-length')) {
-                $body = $request->getBody();
-                $body->rewind();
-                $content = $body->getContents();
-                $request = $request->withHeader('content-length', (string) strlen($content));
-                $body->rewind();
-            }
-            if (!$request->hasHeader('content-type')){
-                $request = $request->withHeader('content-type', 'application/x-www-form-urlencoded');
-            }
-        }
-
+        $request = $this->_checkPostHeaders($request);
 
         $stream = new Stream($f);
         $stream->write($request->getRawMessage());
@@ -105,6 +93,29 @@ class SocketClient extends AbstractClient {
 
         $this->_last_request = $request;
         return $this->followRedirection($request, $response);
+    }
+
+    /**
+     * Checks content length and content-type headers needed for post
+     * 
+     * @param Request $request
+     * 
+     * @return Request
+     */
+    protected function _checkPostHeaders($request) {
+        if ($request->getMethod() == 'POST') {
+            if (!$request->hasHeader('content-length')) {
+                $body = $request->getBody();
+                $body->rewind();
+                $content = $body->getContents();
+                $request = $request->withHeader('content-length', (string) strlen($content));
+                $body->rewind();
+            }
+            if (!$request->hasHeader('content-type')) {
+                $request = $request->withHeader('content-type', 'application/x-www-form-urlencoded');
+            }
+        }
+        return $request;
     }
 
     /**
