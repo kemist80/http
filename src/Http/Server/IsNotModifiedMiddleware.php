@@ -9,7 +9,7 @@ use Kemist\Http\Stream\Stream;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 class IsNotModifiedMiddleware extends AbstractMiddleware {
 
@@ -40,8 +40,7 @@ class IsNotModifiedMiddleware extends AbstractMiddleware {
         }
 
         if ($notModified) {
-            $response = $response->withStatus(304);
-            $response = $response->withBody(new Stream('php://memory', 'wb+'));
+            $response = $response->withStatus(304)->withBody(new Stream('php://memory', 'wb+'));
             foreach (array('allow', 'content-encoding', 'content-language', 'content-Length', 'content-md5', 'content-type', 'last-modified') as $header) {
                 if ($response->hasHeader($header)) {
                     $response = $response->withoutHeader($header);
