@@ -49,12 +49,14 @@ $request=(new Kemist\Http\Request())
         ->withMethod('POST')
         ->withHeader('accept','text/html')
         ->withHeader('connection','close')
+        ->withBody(new Kemist\Http\Stream\StringStream('param1=value1&param2=value2'))
 ;
-$request=$request->withBody(new Kemist\Http\Stream\StringStream('param1=value1&param2=value2'));
+
 // cURL client
 $client=new Kemist\Http\Client\CurlClient();
 // OR Socket-based client
 $client=new Kemist\Http\Client\SocketClient();
+
 $response=$client->send($request);
 
 var_dump($response->getHeaders());
