@@ -9,7 +9,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @package Kemist\Http
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 class Uri implements UriInterface {
 
@@ -157,12 +157,12 @@ class Uri implements UriInterface {
      * Retrieve the path segment of the URI.
      *
      * This method MUST return a string; if no path is present it MUST return
-     * an empty string.
+     * the string "/".
      *
      * @return string The path segment of the URI.
      */
     public function getPath() {
-        return (string) $this->_path;
+        return $this->_path == '' ? '/' : (string) $this->_path;
     }
 
     /**
