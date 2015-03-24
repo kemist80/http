@@ -77,70 +77,69 @@ class AbstractClientTest extends \PHPUnit_Framework_TestCase {
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), '');
     }
-    
+
     public function testSetRequestCookiesDomain() {
         $request = new Request('https://example.com');
         $response = new Response;
         $response = $response->withHeader('set-cookie', 'cookie1=value1;Domain=example.com');
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), 'cookie1=value1');
-    }    
-    
+    }
+
     public function testSetRequestCookiesSubDomain() {
         $request = new Request('https://sub.example.com');
         $response = new Response;
         $response = $response->withHeader('set-cookie', 'cookie1=value1;Domain=.example.com');
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), 'cookie1=value1');
-    }      
-    
+    }
+
     public function testSetRequestCookiesOtherDomain() {
         $request = new Request('https://example.com');
         $response = new Response;
         $response = $response->withHeader('set-cookie', 'cookie1=value1;Domain=sub.example.com');
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), '');
-    } 
-    
+    }
+
     public function testSetRequestCookiesNotExpired() {
         $request = new Request('https://example.com');
         $response = new Response;
-        $response = $response->withHeader('set-cookie', 'cookie1=value1;Expires='.gmdate('D, d-M-Y H:i:s e', time()+3600));
+        $response = $response->withHeader('set-cookie', 'cookie1=value1;Expires=' . gmdate('D, d-M-Y H:i:s e', time() + 3600));
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), 'cookie1=value1');
-    }       
-    
+    }
+
     public function testSetRequestCookiesExpired() {
         $request = new Request('https://example.com');
         $response = new Response;
-        $response = $response->withHeader('set-cookie', 'cookie1=value1;Expires='.gmdate('D, d-M-Y H:i:s e', time()-3600));
+        $response = $response->withHeader('set-cookie', 'cookie1=value1;Expires=' . gmdate('D, d-M-Y H:i:s e', time() - 3600));
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), '');
-    }         
-    
+    }
+
     public function testSetRequestCookiesPath() {
         $request = new Request('https://example.com/path');
         $response = new Response;
         $response = $response->withHeader('set-cookie', 'cookie1=value1;Path=/path');
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), 'cookie1=value1');
-    }        
-    
+    }
+
     public function testSetRequestCookiesBasePath() {
         $request = new Request('https://example.com/path');
         $response = new Response;
         $response = $response->withHeader('set-cookie', 'cookie1=value1;Path=/');
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), 'cookie1=value1');
-    }  
-    
-    
+    }
+
     public function testSetRequestCookiesOtherPath() {
         $request = new Request('https://example.com');
         $response = new Response;
         $response = $response->withHeader('set-cookie', 'cookie1=value1;Path=/path');
         $new_request = $this->_client->setRequestCookies($request, $response);
         $this->assertEquals($new_request->getHeader('cookie'), '');
-    }    
+    }
 
 }
